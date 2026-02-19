@@ -3,24 +3,28 @@ body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    
 }
 
 body main{
     height:70vh;
-    width: 70vw;
-    border: 1px solid black;
+    width: 60vw;
     display:grid;
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
     gap:5px;
+    perspective: 1000px;
+    
 }
 
 body main div{
-
-height: 100%;
-    width: 100%;
-    border: 1px solid black;
-    font-size: 3rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+     height: 100%;
+      width: 100%;
+     border: 1px solid black;
+     font-size: 3rem;
+     display: flex;
+     justify-content: center;
+      align-items: center;
+      background-color: aqua;  
 }
+
