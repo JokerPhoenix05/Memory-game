@@ -1,6 +1,4 @@
-let box = document.getElementById("box");
-let boxContainer = new Array();
-let symbols = [
+const symbols = [
   "🍎",
   "🍎",
   "🚀",
@@ -14,74 +12,60 @@ let symbols = [
   "🤖",
   "🤖",
 ];
-let randomSymbols = shuffleArray(symbols);
-let match = new Array();
-let count = 0;
-let timer1;
-let timer2;
-let ok = false;
+const board = document.getElementById("box");
+const resetGameBtn = document.getElementById("resetGame");
+let flippedCards = [];
 
-for (let i = 0; i < 12; i++) {
-  let boxes = document.createElement("div");
-  boxes.id = "boxes";
-  boxContainer.push(boxes);
-  flip(i);
-  box.appendChild(boxContainer[i]);
-}
+function createBoard() {
+  board.innerHTML = "";
+  shuffleSymbols(symbols);
 
-function flip(i) {
-  boxContainer[i].addEventListener("click", function () {
-     
-    if (match.length == 2) {
-
-       if (match[0].textContent === match[1].textContent) {
-           clearTimeout(timer2); 
-         match[0].style.visibility = "hidden";
-          match[1].style.visibility = "hidden";
-          match = [];
-      }else{
-      clearTimeout(timer1);
-      for (let i = 0; i < match.length; i++) {
-        match[i].style.transition = "transform 0.6s";
-        match[i].style.transform = "rotateY(0deg)";
-        match[i].style.backgroundColor = "aqua";
-        match[i].innerHTML = "";
-      }
-      match = [];
-    }
-
-  }
-    boxContainer[i].style.transition = "transform 0.6s";
-    boxContainer[i].style.transform = "rotateY(180deg)";
-    boxContainer[i].style.backgroundColor = "white";
-    boxContainer[i].innerHTML = randomSymbols[i];
-    match.push(boxContainer[i]);
-    if (match.length == 2) {
-      if (match[0].textContent === match[1].textContent) {
-        match[0].style.backgroundColor = "green";
-        match[1].style.backgroundColor = "green";
-         timer2=setTimeout(function(){
-          match[0].style.visibility = "hidden";
-          match[1].style.visibility = "hidden";
-          match = [];
-        },2000)
-       
-      } else {
-        timer1 = setTimeout(function () {
-          for (let i = 0; i < match.length; i++) {
-            match[i].style.transition = "transform 0.6s";
-            match[i].style.transform = "rotateY(0deg)";
-            match[i].style.backgroundColor = "aqua";
-            match[i].innerHTML = "";
-          }
-          match = [];
-        }, 3000);
-      }
-    }
+  symbols.forEach((symbol) => {
+    const card = document.createElement("div");
+    card.dataset.symbol = symbol;
+    card.innerText = "?";
+    card.addEventListener("click", flipCard);
+    board.appendChild(card);
   });
 }
 
-function shuffleArray(arr) {
+function flipCard() {
+  if (flippedCards.length < 2 && !this.classList.contains("flipped")) {
+    this.innerText = this.dataset.symbol;
+    this.classList.add("flipped");
+    flippedCards.push(this);
+
+    if (flippedCards.length === 2) {
+      checkMatch();
+    }
+  }
+}
+
+function checkMatch() {
+  const [card1, card2] = flippedCards;
+  if (card1.dataset.symbol === card2.dataset.symbol) {
+    card1.style.backgroundColor = "var(--bg-success)";
+    card2.style.backgroundColor = "var(--bg-success)";
+    flippedCards = [];
+    const isGameOver =
+      document.querySelectorAll(".flipped").length === symbols.length;
+    if (isGameOver) {
+      setTimeout(() => {
+        alert("Game Over! 🎉");
+      }, 500);
+    }
+  } else {
+    setTimeout(() => {
+      card1.innerText = "?";
+      card2.innerText = "?";
+      card1.classList.remove("flipped");
+      card2.classList.remove("flipped");
+      flippedCards = [];
+    }, 1000);
+  }
+}
+
+function shuffleSymbols(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     // pick random index
     let j = Math.floor(Math.random() * (i + 1));
@@ -91,3 +75,7 @@ function shuffleArray(arr) {
   }
   return arr;
 }
+
+resetGameBtn.addEventListener("click", createBoard);
+
+createBoard();
